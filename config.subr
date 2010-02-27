@@ -1,5 +1,5 @@
 #!/bin/bash
-# -*- mode: shell-script; mode:flyspell-prog; -*-
+# -*- mode: shell-script; mode: flyspell-prog; -*-
 
 # target
 target=arm-cortex-eabi
@@ -40,4 +40,4 @@ openocd=openocd-svn
 # Local Variables:
 # indent-tabs-mode: nil
 # End:
-# vim: set et ts=4 sw=4
+# vim: set et ts=4 sw=4:
