@@ -5,8 +5,6 @@
 
 function download() {
     cd $buildtop
-    [[ -f $scriptdir/$binutils-dollar.patch ]] \
-        || die $scriptdir/$binutils-dollar.patch is missing
     [[ -f $binutils.tar.bz2 ]] \
         || fetch $url_gnu/binutils/$binutils.tar.bz2
     return 0
@@ -16,8 +14,12 @@ function prepare() {
     cd $buildtop
     rm -rf $binutils
     tar xjf $binutils.tar.bz2
-    patch -p1 -d $binutils < $scriptdir/$binutils-dollar.patch \
-        || die "apply patch failed"
+    if [[ -f "$scriptdir/$binutils-*.patch" ]]; then
+        for p in $scriptdir/$binutils-*.patch; do
+            patch -p1 -d $binutils < $p \
+                || die "patch $p failed"
+        done
+    fi
     return 0
 }
 
