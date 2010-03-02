@@ -28,7 +28,6 @@ function download() {
 
 function prepare() {
     cd $buildtop
-    rm -rf $gdb
     tar xjf $gdb.tar.bz2
     return 0
 }
@@ -38,6 +37,7 @@ function build() {
     mkdir $builddir
     cd $builddir
     ../$gdb/configure --target=$target --prefix=$prefix \
+        --enable-interwork --enable-multilib \
         --disable-nls \
         || die "configure failed"
     make -j$(num_cpus) \

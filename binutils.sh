@@ -27,7 +27,6 @@ function download() {
 
 function prepare() {
     cd $buildtop
-    rm -rf $binutils
     tar xjf $binutils.tar.bz2
     for p in $scriptdir/$binutils-*.patch; do
         [[ -f $p ]] && patch -p1 -d $binutils < $p \

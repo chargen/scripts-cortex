@@ -17,7 +17,7 @@
 #
 
 # target
-target=arm-cortex-eabi
+target=arm-none-eabi
 
 # install prefix
 prefix=/opt/cortex

@@ -18,8 +18,20 @@
 
 . $(dirname $0)/main.subr
 
+gcccore=$(echo $gcc | sed 's/gcc-/gcc-core-/')
+builddir=$buildtop/build-$target-gcc
+
 function download() {
     cd $buildtop
+    [[ -f $gcccore.tar.bz2 ]] \
+        || fetch $url_gnu/gcc/$gcc/$gcccore.tar.bz2 \
+        || die "can not download $gcccore.tar.bz2 from $url_gnu"
+    [[ -f $gmp.tar.bz2 ]] \
+        || fetch $url_gnu/gmp/$gmp.tar.bz2 \
+        || die "can not download $gmp.tar.bz2 from $url_gnu"
+    [[ -f $mpfr.tar.bz2 ]] \
+        || fetch $url_mpfr/$mpfr/$mpfr.tar.bz2 \
+        || die "can not download $mpfr.tar.bz2 from $url_mpfr"
     [[ -f $newlib.tar.gz ]] \
         || fetch $url_newlib/$newlib.tar.gz \
         || die "can not download $newlib.tar.gz from $url_newlib"
@@ -28,6 +40,13 @@ function download() {
 
 function prepare() {
     cd $buildtop
+    tar xjf $gcccore.tar.bz2
+    tar xjf $gmp.tar.bz2 -C $gcc
+    [[ -d $gcc/gmp ]] && rm -rf $gcc/gmp
+    mv $gcc/$gmp $gcc/gmp
+    tar xjf $mpfr.tar.bz2 -C $gcc
+    [[ -d $gcc/mpfr ]] && rm -rf $gcc/mpfr
+    mv $gcc/$mpfr $gcc/mpfr
     tar xzf $newlib.tar.gz
     return 0
 }
@@ -36,22 +55,25 @@ function build() {
     rm -rf $builddir
     mkdir $builddir
     cd $builddir
-    ../$newlib/configure --target=$target --prefix=$prefix \
-        --enable-interwork --enable-multilib \
-        --disable-nls \
+    ../$gcc/configure --target=$target --prefix=$prefix \
+        --mandir=$prefix/share/man --infodir=$prefix/share/info \
+        --enable-languages="c" --enable-interwork --enable-multilib \
+        --with-newlib --with-headres=../$newlib/newlib/libc/include \
+        --with-gnu-as --with-gnu-ld \
+        --disable-libmudflap --disable-libgomp --disable-libssp \
+        --disable-shared --disable-nls \
         || die "configure failed"
-    make -j$(num_cpus) \
+    make -j$(num_cpus) all-gcc \
         || die "make failed"
 }
 
 function install() {
     cd $builddir
-    sudo make install
+    sudo make install-gcc
 }
 
 function cleanup() {
-    cd $buildtop
-    rm -rf $builddir $newlib
+    return 0
 }
 
 main "$@"
