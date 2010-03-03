@@ -41,6 +41,7 @@ function build() {
         --disable-nls \
         || die "configure failed"
     make -j$(num_cpus) \
+        CFLAGS_FOR_TARGET="-DPREFERED_SIZE_OVER_SPEED -D__OPTIMEZE_SIE__ -Os -fomit-frame-pointer" \
         || die "make failed"
 }
 

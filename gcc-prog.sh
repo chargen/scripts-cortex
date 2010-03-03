@@ -32,9 +32,6 @@ function download() {
     [[ -f $mpfr.tar.bz2 ]] \
         || fetch $url_mpfr/$mpfr/$mpfr.tar.bz2 \
         || die "can not download $mpfr.tar.bz2 from $url_mpfr"
-    [[ -f $newlib.tar.gz ]] \
-        || fetch $url_newlib/$newlib.tar.gz \
-        || die "can not download $newlib.tar.gz from $url_newlib"
     return 0
 }
 
@@ -47,7 +44,6 @@ function prepare() {
     tar xjf $mpfr.tar.bz2 -C $gcc
     [[ -d $gcc/mpfr ]] && rm -rf $gcc/mpfr
     mv $gcc/$mpfr $gcc/mpfr
-    tar xzf $newlib.tar.gz
     return 0
 }
 
@@ -58,7 +54,7 @@ function build() {
     ../$gcc/configure --target=$target --prefix=$prefix \
         --mandir=$prefix/share/man --infodir=$prefix/share/info \
         --enable-languages="c" --enable-interwork --enable-multilib \
-        --with-newlib --with-headres=../$newlib/newlib/libc/include \
+        --with-newlib --without-headers \
         --with-gnu-as --with-gnu-ld \
         --disable-libmudflap --disable-libgomp --disable-libssp \
         --disable-shared --disable-nls \
