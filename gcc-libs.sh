@@ -22,15 +22,47 @@ gcccore=$(echo $gcc | sed 's/gcc-/gcc-core-/')
 builddir=$buildtop/build-$target-gcc
 
 function download() {
+    cd $buildtop
+    [[ -f $gcccore.tar.bz2 ]] \
+        || fetch $url_gnu/gcc/$gcc/$gcccore.tar.bz2 \
+        || die "can not download $gcccore.tar.bz2 from $url_gnu"
+    [[ -f $gmp.tar.bz2 ]] \
+        || fetch $url_gnu/gmp/$gmp.tar.bz2 \
+        || die "can not download $gmp.tar.bz2 from $url_gnu"
+    [[ -f $mpfr.tar.bz2 ]] \
+        || fetch $url_mpfr/$mpfr/$mpfr.tar.bz2 \
+        || die "can not download $mpfr.tar.bz2 from $url_mpfr"
     return 0
 }
 
 function prepare() {
+    cd $buildtop
+    if [[ ! -d $gcc ]]; then
+        tar xjf $gcccore.tar.bz2
+    fi
+    if [[ ! -d $gcc/gmp ]]; then
+        tar xjf $gmp.tar.bz2 -C $gcc
+        mv $gcc/$gmp $gcc/gmp
+    fi
+    if [[ ! -d $gcc/mpfr ]]; then
+        tar xjf $mpfr.tar.bz2 -C $gcc
+        mv $gcc/$mpfr $gcc/mpfr
+    fi
     return 0
 }
 
 function build() {
+    rm -rf $builddir
+    mkdir $builddir
     cd $builddir
+    ../$gcc/configure --target=$target --prefix=$prefix \
+        --mandir=$prefix/share/man --infodir=$prefix/share/info \
+        --enable-languages="c" --enable-interwork --enable-multilib \
+        --with-newlib \
+        --with-gnu-as --with-gnu-ld \
+        --disable-libmudflap --disable-libgomp --disable-libssp \
+        --disable-shared --disable-nls \
+        || die "configure failed"
     make -j$(num_cpus) \
         || die "make failed"
 }
