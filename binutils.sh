@@ -29,7 +29,8 @@ function prepare() {
     cd $buildtop
     tar xjf $binutils.tar.bz2
     for p in $scriptdir/$binutils-*.patch; do
-        [[ -f $p ]] && patch -p1 -d $binutils < $p \
+        [[ -f $p ]] || continue
+        patch -p1 -d $binutils < $p \
             || die "patch $p failed"
     done
     return 0

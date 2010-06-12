@@ -30,8 +30,8 @@ function download() {
         || fetch $url_gnu/gmp/$gmp.tar.bz2 \
         || die "can not download $gmp.tar.bz2 from $url_gnu"
     [[ -f $mpfr.tar.bz2 ]] \
-        || fetch $url_mpfr/$mpfr/$mpfr.tar.bz2 \
-        || die "can not download $mpfr.tar.bz2 from $url_mpfr"
+        || fetch $url_gnu/mpfr/$mpfr.tar.bz2 \
+        || die "can not download $mpfr.tar.bz2 from $url_gnu"
     return 0
 }
 
