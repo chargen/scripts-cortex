@@ -32,6 +32,9 @@ function download() {
     [[ -f $mpfr.tar.bz2 ]] \
         || fetch $url_gnu/mpfr/$mpfr.tar.bz2 \
         || die "can not download $mpfr.tar.bz2 from $url_gnu"
+    [[ -f $mpc.tar.gz ]] \
+        || fetch $url_mpc/$mpc.tar.gz \
+        || die "can not download $mpc.tar.gz from $url_mpc"
     return 0
 }
 
@@ -47,6 +50,10 @@ function prepare() {
     if [[ ! -d $gcc/mpfr ]]; then
         tar xjf $mpfr.tar.bz2 -C $gcc
         mv $gcc/$mpfr $gcc/mpfr
+    fi
+    if [[ ! -d $gcc/mpc ]]; then
+        tar xzf $mpc.tar.gz -C $gcc
+        mv $gcc/$mpc $gcc/mpc
     fi
     return 0
 }
