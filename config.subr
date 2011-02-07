@@ -40,8 +40,8 @@ prefix=/opt/cortex
 
 # gnu
 url_gnu=ftp://ftp.gnu.org/pub/gnu
-binutils=binutils-2.20.1
-gcc=gcc-4.5.1
+binutils=binutils-2.21
+gcc=gcc-4.5.2
 gmp=gmp-4.3.2
 mpfr=mpfr-2.4.2
 gdb=gdb-7.2
@@ -52,7 +52,7 @@ mpc=mpc-0.8.2
 
 # newlib
 url_newlib=ftp://sources.redhat.com/pub/newlib
-newlib=newlib-1.18.0
+newlib=newlib-1.19.0
 
 # libusb & libftdi
 # port install libftdi
