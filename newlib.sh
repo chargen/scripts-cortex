@@ -44,7 +44,14 @@ function download() {
 
 function prepare() {
     cd $buildtop
+    rm -rf $newlib
     tar xzf $newlib.tar.gz
+    
+    for p in $scriptdir/newlib-fix_*.patch; do
+        [[ -f $p ]] || continue
+        patch -d $newlib -p1 < $p \
+            || die "patch $p failed"
+    done
     return 0
 }
 
