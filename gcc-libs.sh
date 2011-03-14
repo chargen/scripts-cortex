@@ -34,23 +34,22 @@
 
 . $(dirname $0)/main.subr
 
-gcccore=$(echo $gcc | sed 's/gcc-/gcc-core-/')
 builddir=$buildtop/build-$target-gcc
 
 function download() {
     cd $buildtop
     [[ -f $gcccore.tar.bz2 ]] \
-        || fetch $url_gnu/gcc/$gcc/$gcccore.tar.bz2 \
-        || die "can not download $gcccore.tar.bz2 from $url_gnu"
+        || fetch $url_gcccore $gcccore.tar.bz2 \
+        || die "can not download from $url_gcccore"
     [[ -f $gmp.tar.bz2 ]] \
-        || fetch $url_gnu/gmp/$gmp.tar.bz2 \
-        || die "can not download $gmp.tar.bz2 from $url_gnu"
+        || fetch $url_gmp $gmp.tar.bz2 \
+        || die "can not download from $url_gmp"
     [[ -f $mpfr.tar.bz2 ]] \
-        || fetch $url_gnu/mpfr/$mpfr.tar.bz2 \
-        || die "can not download $mpfr.tar.bz2 from $url_gnu"
+        || fetch $url_mpfr $mpfr.tar.bz2 \
+        || die "can not download from $url_mpfr"
     [[ -f $mpc.tar.gz ]] \
-        || fetch $url_mpc/$mpc.tar.gz \
-        || die "can not download $mpc.tar.gz from $url_mpc"
+        || fetch $url_mpc $mpc.tar.gz \
+        || die "can not download from $url_mpc"
     return 0
 }
 

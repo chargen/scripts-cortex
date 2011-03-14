@@ -37,8 +37,7 @@
 function download() {
     cd $buildtop
     [[ -f $newlib.tar.gz ]] \
-        || fetch $url_newlib/$newlib.tar.gz \
-        || die "can not download $newlib.tar.gz from $url_newlib"
+        || fetch $url_newlib $newlib.tar.gz
     return 0
 }
 
