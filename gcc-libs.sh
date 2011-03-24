@@ -59,16 +59,19 @@ function prepare() {
         tar xjf $gcccore.tar.bz2
     fi
     if [[ ! -d $gcc/gmp ]]; then
-        tar xjf $gmp.tar.bz2 -C $gcc
-        mv $gcc/$gmp $gcc/gmp
+        tar xjf $gmp.tar.bz2
+        [[ -d $gcc/gmp ]] && rm -f $gcc/gmp
+        ln -s $buildtop/$gmp $gcc/gmp
     fi
     if [[ ! -d $gcc/mpfr ]]; then
-        tar xjf $mpfr.tar.bz2 -C $gcc
-        mv $gcc/$mpfr $gcc/mpfr
+        tar xjf $mpfr.tar.bz2
+        [[ -d $gcc/mpfr ]] && rm -f $gcc/mpfr
+        ln -s $buildtop/$mpfr $gcc/mpfr
     fi
     if [[ ! -d $gcc/mpc ]]; then
-        tar xzf $mpc.tar.gz -C $gcc
-        mv $gcc/$mpc $gcc/mpc
+        tar xzf $mpc.tar.gz
+        [[ -d $gcc/mpc ]] && rm -f $gcc/mpc
+        ln -s $buildtop/$mpc $gcc/mpc
     fi
     return 0
 }
@@ -96,7 +99,7 @@ function install() {
 
 function cleanup() {
     cd $buildtop
-    rm -rf $builddir $gcc
+    rm -rf $builddir $gcc $gmp $mpfr $mpc
 }
 
 main "$@"

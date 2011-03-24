@@ -51,16 +51,24 @@ function download() {
 
 function prepare() {
     cd $buildtop
-    tar xjf $gcccore.tar.bz2
-    tar xjf $gmp.tar.bz2 -C $gcc
-    [[ -d $gcc/gmp ]] && rm -rf $gcc/gmp
-    mv $gcc/$gmp $gcc/gmp
-    tar xjf $mpfr.tar.bz2 -C $gcc
-    [[ -d $gcc/mpfr ]] && rm -rf $gcc/mpfr
-    mv $gcc/$mpfr $gcc/mpfr
-    tar xzf $mpc.tar.gz -C $gcc
-    [[ -d $gcc/mpc ]] && rm -rf $gcc/mpc
-    mv $gcc/$mpc $gcc/mpc
+    if [[ ! -d $gcc ]]; then
+        tar xjf $gcccore.tar.bz2
+    fi
+    if [[ ! -d $gcc/gmp ]]; then
+        tar xjf $gmp.tar.bz2
+        [[ -d $gcc/gmp ]] && rm -f $gcc/gmp
+        ln -s $buildtop/$gmp $gcc/gmp
+    fi
+    if [[ ! -d $gcc/mpfr ]]; then
+        tar xjf $mpfr.tar.bz2
+        [[ -d $gcc/mpfr ]] && rm -f $gcc/mpfr
+        ln -s $buildtop/$mpfr $gcc/mpfr
+    fi
+    if [[ ! -d $gcc/mpc ]]; then
+        tar xzf $mpc.tar.gz
+        [[ -d $gcc/mpc ]] && rm -f $gcc/mpc
+        ln -s $buildtop/$mpc $gcc/mpc
+    fi
     return 0
 }
 
