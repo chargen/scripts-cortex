@@ -36,8 +36,7 @@
 
 function download() {
     cd $buildtop
-    [[ -f $gdb.tar.bz2 ]] \
-        || fetch $url_gdb $gdb.tar.bz2
+    fetch $url_gdb $gdb.tar.bz2
     return 0
 }
 

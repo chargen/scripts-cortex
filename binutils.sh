@@ -36,9 +36,7 @@
 
 function download() {
     cd $buildtop
-    [[ -f $binutils.tar.bz2 ]] \
-        || fetch $url_binutils $binutils.tar.bz2 \
-        || die "can not download from $url_binutils"
+    fetch $url_binutils $binutils.tar.bz2
     return 0
 }
 

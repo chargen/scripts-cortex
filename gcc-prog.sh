@@ -38,14 +38,10 @@ builddir=$buildtop/build-$target-gcc
 
 function download() {
     cd $buildtop
-    [[ -f $gcccore.tar.bz2 ]] \
-        || fetch $url_gcccore $gcccore.tar.bz2
-    [[ -f $gmp.tar.bz2 ]] \
-        || fetch $url_gmp $gmp.tar.bz2
-    [[ -f $mpfr.tar.bz2 ]] \
-        || fetch $url_mpfr $mpfr.tar.bz2
-    [[ -f $mpc.tar.gz ]] \
-        || fetch $url_mpc $mpc.tar.gz
+    fetch $url_gcccore $gcccore.tar.bz2
+    fetch $url_gmp $gmp.tar.bz2
+    fetch $url_mpfr $mpfr.tar.bz2
+    fetch $url_mpc $mpc.tar.gz
     return 0
 }
 

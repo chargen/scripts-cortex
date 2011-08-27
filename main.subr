@@ -42,15 +42,21 @@ which curl >/dev/null && fetch="curl"
 function fetch() {
     [[ $# -eq 2 ]] || die "usage: fetch url out_file"
     local url=$1 out=$2
-    if [[ $fetch = "wget" ]]; then
-        $fetch -O $out $url \
-            || die "can not fetch $url"
-    elif [[ $fetch = "curl" ]]; then
-        $fetch -o $out -L $url \
-            || die "can not fetch $url"
-    else
-        die "unknown fetch method: $fetch"
-    fi
+    [[ -f $out ]] \
+        && return
+    case $fetch in
+        wget)
+            $fetch -O $out $url \
+                || die "can not fetch $out from $url"
+            ;;
+        curl)
+            $fetch -o $out -L $url \
+                || die "can not fetch $out from $url"
+            ;;
+        *)
+            die "unknown fetch method: $fetch"
+            ;;
+    esac
 }
 
 which cvs >/dev/null || die "missing cvs"
@@ -59,10 +65,13 @@ which git >/dev/null || die "missing git"
 
 scriptdir=$(absolute_path $(dirname $0))
 scriptname=$(basename $0 .sh)
+buildtop=$PWD
 
 . $scriptdir/config.subr
+if declare -F config_prepare >/dev/null; then
+    set -x; config_prepare; set +x
+fi
 
-buildtop=$PWD
 builddir=$PWD/build-$target-$scriptname
 
 function usage {

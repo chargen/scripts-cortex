@@ -36,8 +36,7 @@
 
 function download() {
     cd $buildtop
-    [[ -f $newlib.tar.gz ]] \
-        || fetch $url_newlib $newlib.tar.gz
+    fetch $url_newlib $newlib.tar.gz
     return 0
 }
 
