@@ -53,6 +53,8 @@ url_binutils=$url_gnu/binutils/$binutils.tar.bz2
 url_gcccore=$url_gnu/gcc/$gcc/$gcccore.tar.bz2
 url_gmp=$url_gnu/gmp/$gmp.tar.bz2
 url_gdb=$url_gnu/gdb/$gdb.tar.bz2
+[[ $gdb == gdb-7.2 ]] \
+    && url_gdb=${url_gdb/7.2/7.2a}
 url_mpfr=http://www.mpfr.org/$mpfr/$mpfr.tar.bz2
 
 # mpc
