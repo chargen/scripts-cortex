@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/bash -u
 # -*- mode: shell-script; mode: flyspell-prog; -*-
 #
-# Copyright (c) 2010, Tadashi G Takaoka
+# Copyright (c) 2011, Tadashi G Takaoka
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,43 +32,30 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# target
-target=arm-none-eabi
+. $(dirname $0)/main.subr
 
-# install prefix
-prefix=/opt/cortex
+PATH=$prefix/bin:$PATH
 
-# gnu
-url_gnu=ftp://ftp.gnu.org/pub/gnu
-binutils=binutils-2.21.1
-gcc=gcc-4.6.2
-gcccore=${gcc/gcc-/gcc-core-}
-gmp=gmp-4.3.2
-mpfr=mpfr-2.4.2
-gdb=gdb-7.3.1
-url_gnu=ftp://ftp.gnu.org/pub/gnu
-url_binutils=$url_gnu/binutils/$binutils.tar.bz2
-url_gcccore=$url_gnu/gcc/$gcc/$gcccore.tar.bz2
-url_gmp=$url_gnu/gmp/$gmp.tar.bz2
-url_gdb=$url_gnu/gdb/$gdb.tar.bz2
-url_mpfr=http://www.mpfr.org/$mpfr/$mpfr.tar.bz2
+modules="gcc-prog newlib gcc-libs"
 
-# mpc
-mpc=mpc-0.8.2
-url_mpc=http://www.multiprecision.org/mpc/download/$mpc.tar.gz
-
-# newlib
-newlib=newlib-1.19.0
-url_newlib=ftp://sources.redhat.com/pub/newlib/$newlib.tar.gz
-
-# libusb & libftdi
-# port install libftdi
-#url_libftdi=http://www.intra2net.com/en/developer/libftdi/download
-#libftdi=libftdi-0.17.tar.gz
-
-# openocd
-url_openocd=svn://svn.berlios.de/openocd/trunk
-openocd=openocd-svn
+for cmd in "$@"; do
+    case $cmd in
+    build)
+        for module in $modules; do
+            $scriptdir/$module.sh build install
+        done
+        ;;
+    install)
+        ;;
+    download|clean|cleanup)
+        for module in $modules; do
+            $scriptdir/$module.sh "$@"
+        done
+        ;;
+    *)
+        die "unknown command '$cmd'";;
+    esac
+done
 
 # Local Variables:
 # indent-tabs-mode: nil
