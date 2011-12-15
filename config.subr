@@ -40,7 +40,7 @@ prefix=/opt/cortex
 
 # gnu
 url_gnu=ftp://ftp.gnu.org/pub/gnu
-binutils=binutils-2.21.1
+binutils=binutils-2.22
 gcc=gcc-4.6.2
 gcccore=${gcc/gcc-/gcc-core-}
 gmp=gmp-4.3.2
