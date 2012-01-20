@@ -37,7 +37,7 @@
 builddir=$buildtop/build-$target-gcc
 
 function download() {
-    cd $buildtop
+    do_cd $buildtop
     fetch $url_gcccore $gcccore.tar.bz2
     fetch $url_gmp $gmp.tar.bz2
     fetch $url_mpfr $mpfr.tar.bz2
@@ -46,33 +46,33 @@ function download() {
 }
 
 function prepare() {
-    cd $buildtop
+    do_cd $buildtop
     if [[ ! -d $gcc ]]; then
-        tar xjf $gcccore.tar.bz2
+        do_cmd tar xjf $gcccore.tar.bz2
     fi
     if [[ ! -d $gcc/gmp ]]; then
-        tar xjf $gmp.tar.bz2
-        [[ -d $gcc/gmp ]] && rm -f $gcc/gmp
-        ln -s $buildtop/$gmp $gcc/gmp
+        do_cmd tar xjf $gmp.tar.bz2
+        [[ -d $gcc/gmp ]] && do_cmd rm -f $gcc/gmp
+        do_cmd ln -s $buildtop/$gmp $gcc/gmp
     fi
     if [[ ! -d $gcc/mpfr ]]; then
-        tar xjf $mpfr.tar.bz2
-        [[ -d $gcc/mpfr ]] && rm -f $gcc/mpfr
-        ln -s $buildtop/$mpfr $gcc/mpfr
+        do_cmd tar xjf $mpfr.tar.bz2
+        [[ -d $gcc/mpfr ]] && do_cmd rm -f $gcc/mpfr
+        do_cmd ln -s $buildtop/$mpfr $gcc/mpfr
     fi
     if [[ ! -d $gcc/mpc ]]; then
-        tar xzf $mpc.tar.gz
-        [[ -d $gcc/mpc ]] && rm -f $gcc/mpc
-        ln -s $buildtop/$mpc $gcc/mpc
+        do_cmd tar xzf $mpc.tar.gz
+        [[ -d $gcc/mpc ]] && do_cmd rm -f $gcc/mpc
+        do_cmd ln -s $buildtop/$mpc $gcc/mpc
     fi
     return 0
 }
 
 function build() {
-    rm -rf $builddir
-    mkdir $builddir
-    cd $builddir
-    ../$gcc/configure --target=$target --prefix=$prefix \
+    do_cmd rm -rf $builddir
+    do_cmd mkdir $builddir
+    do_cd $builddir
+    do_cmd ../$gcc/configure --target=$target --prefix=$prefix \
         --mandir=$prefix/share/man --infodir=$prefix/share/info \
         --enable-languages="c" --enable-interwork --enable-multilib \
         --with-newlib \
@@ -80,18 +80,18 @@ function build() {
         --disable-libmudflap --disable-libgomp --disable-libssp \
         --disable-shared --disable-nls \
         || die "configure failed"
-    make -j$(num_cpus) \
+    do_cmd make -j$(num_cpus) \
         || die "make failed"
 }
 
 function install() {
-    cd $builddir
-    sudo make install
+    do_cd $builddir
+    do_cmd sudo make -j$(num_cpus) install
 }
 
 function cleanup() {
-    cd $buildtop
-    rm -rf $builddir $gcc $gmp $mpfr $mpc
+    do_cd $buildtop
+    do_cmd rm -rf $builddir $gcc $gmp $mpfr $mpc
 }
 
 main "$@"

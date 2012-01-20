@@ -35,43 +35,43 @@
 . $(dirname $0)/main.subr
 
 function download() {
-    cd $buildtop
+    do_cd $buildtop
     fetch $url_binutils $binutils.tar.bz2
     return 0
 }
 
 function prepare() {
-    cd $buildtop
-    tar xjf $binutils.tar.bz2
+    do_cd $buildtop
+    do_cmd tar xjf $binutils.tar.bz2
     for p in $scriptdir/$binutils-*.patch; do
         [[ -f $p ]] || continue
-        patch -p1 -d $binutils < $p \
+        do_cmd "patch -p1 -d $binutils < $p" \
             || die "patch $p failed"
     done
     return 0
 }
 
 function build() {
-    rm -rf $builddir
-    mkdir $builddir
-    cd $builddir
+    do_cmd rm -rf $builddir
+    do_cmd mkdir $builddir
+    do_cd $builddir
     is_osx && disable_werror=--disable-werror || disable_werror=""
-    ../$binutils/configure -target=$target --prefix=$prefix \
+    do_cmd ../$binutils/configure -target=$target --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls $disable_werror \
         || die "configure failed"
-    make -j$(num_cpus) \
+    do_cmd make -j$(num_cpus) \
         || die "make failed"
 }
 
 function install() {
-    cd $builddir
-    sudo make install
+    do_cd $builddir
+    do_cmd sudo make -j$(num_cpus) install
 }
 
 function cleanup() {
-    cd $buildtop
-    rm -rf $builddir $binutils
+    do_cd $buildtop
+    do_cmd rm -rf $builddir $binutils
 }
 
 main "$@"

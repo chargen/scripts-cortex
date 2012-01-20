@@ -35,45 +35,45 @@
 . $(dirname $0)/main.subr
 
 function download() {
-    cd $buildtop
+    do_cd $buildtop
     fetch $url_newlib $newlib.tar.gz
     return 0
 }
 
 function prepare() {
-    cd $buildtop
-    rm -rf $newlib
-    tar xzf $newlib.tar.gz
+    do_cd $buildtop
+    do_cmd rm -rf $newlib
+    do_cmd tar xzf $newlib.tar.gz
     
     for p in $scriptdir/newlib-fix_*.patch; do
         [[ -f $p ]] || continue
-        patch -d $newlib -p1 < $p \
+        do_cmd "patch -d $newlib -p1 < $p" \
             || die "patch $p failed"
     done
     return 0
 }
 
 function build() {
-    rm -rf $builddir
-    mkdir $builddir
-    cd $builddir
-    ../$newlib/configure --target=$target --prefix=$prefix \
+    do_cmd rm -rf $builddir
+    do_cmd mkdir $builddir
+    do_cd $builddir
+    do_cmd ../$newlib/configure --target=$target --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls \
         || die "configure failed"
-    make -j$(num_cpus) \
-        CFLAGS_FOR_TARGET="-DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer" \
+    do_cmd make -j$(num_cpus) \
+        'CFLAGS_FOR_TARGET="-DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer"' \
         || die "make failed"
 }
 
 function install() {
-    cd $builddir
-    sudo make install
+    do_cd $builddir
+    do_cmd sudo make -j$(num_cpus) install
 }
 
 function cleanup() {
-    cd $buildtop
-    rm -rf $builddir $newlib
+    do_cd $buildtop
+    do_cmd rm -rf $builddir $newlib
 }
 
 main "$@"
