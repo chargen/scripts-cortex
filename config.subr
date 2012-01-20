@@ -58,7 +58,7 @@ mpc=mpc-0.8.2
 url_mpc=http://www.multiprecision.org/mpc/download/$mpc.tar.gz
 
 # newlib
-newlib=newlib-1.19.0
+newlib=newlib-1.20.0
 url_newlib=ftp://sources.redhat.com/pub/newlib/$newlib.tar.gz
 
 # libusb & libftdi
