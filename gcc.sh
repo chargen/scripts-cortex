@@ -38,24 +38,28 @@ PATH=$prefix/bin:$PATH
 
 modules="gcc-prog newlib gcc-libs"
 
-for cmd in "$@"; do
-    case $cmd in
-    build)
-        for module in $modules; do
-            $scriptdir/$module.sh build install
-        done
-        ;;
-    install)
-        ;;
-    download|clean|cleanup)
-        for module in $modules; do
-            $scriptdir/$module.sh "$@"
-        done
-        ;;
-    *)
-        die "unknown command '$cmd'";;
-    esac
-done
+if [[ $# -eq 0 ]]; then
+    $0 download build
+else
+    for cmd in "$@"; do
+        case $cmd in
+        build)
+            for module in $modules; do
+                $scriptdir/$module.sh build install
+            done
+            ;;
+        install)
+            ;;
+        download|clean|cleanup)
+            for module in $modules; do
+                $scriptdir/$module.sh "$@"
+            done
+            ;;
+        *)
+            die "unknown command '$cmd'";;
+        esac
+    done
+fi
 
 # Local Variables:
 # indent-tabs-mode: nil
