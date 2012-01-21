@@ -76,7 +76,7 @@ function build() {
         --mandir=$prefix/share/man --infodir=$prefix/share/info \
         --enable-languages="c" --enable-interwork --enable-multilib \
         --with-newlib --without-headers \
-        --with-gnu-as --with-gnu-ld \
+        --with-gnu-as --with-gnu-ld --with-system-zlib \
         --disable-libmudflap --disable-libgomp --disable-libssp \
         --disable-shared --disable-nls \
         || die "configure failed"
