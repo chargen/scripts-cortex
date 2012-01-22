@@ -32,43 +32,28 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# target
-target=arm-none-eabi
-
 # install prefix
 prefix=/opt/cortex
+buildtarget=arm-none-eabi
 
 # gnu
-url_gnu=ftp://ftp.gnu.org/pub/gnu
+gnu_url=ftp://ftp.gnu.org/pub/gnu
 binutils=binutils-2.22
 gcc=gcc-4.6.2
-gcccore=${gcc/gcc-/gcc-core-}
 gmp=gmp-4.3.2
-mpfr=mpfr-2.4.2
 gdb=gdb-7.3.1
-url_gnu=ftp://ftp.gnu.org/pub/gnu
-url_binutils=$url_gnu/binutils/$binutils.tar.bz2
-url_gcccore=$url_gnu/gcc/$gcc/$gcccore.tar.bz2
-url_gmp=$url_gnu/gmp/$gmp.tar.bz2
-url_gdb=$url_gnu/gdb/$gdb.tar.bz2
-url_mpfr=http://www.mpfr.org/$mpfr/$mpfr.tar.bz2
+
+# mpfr
+mpfr_url=http://www.mpfr.org
+mpfr=mpfr-2.4.2
 
 # mpc
+mpc_url=http://www.multiprecision.org/mpc/download
 mpc=mpc-0.8.2
-url_mpc=http://www.multiprecision.org/mpc/download/$mpc.tar.gz
 
 # newlib
+newlib_url=ftp://sources.redhat.com/pub/newlib
 newlib=newlib-1.20.0
-url_newlib=ftp://sources.redhat.com/pub/newlib/$newlib.tar.gz
-
-# libusb & libftdi
-# port install libftdi
-#url_libftdi=http://www.intra2net.com/en/developer/libftdi/download
-#libftdi=libftdi-0.17.tar.gz
-
-# openocd
-url_openocd=svn://svn.berlios.de/openocd/trunk
-openocd=openocd-svn
 
 # Local Variables:
 # indent-tabs-mode: nil

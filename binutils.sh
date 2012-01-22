@@ -32,31 +32,30 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. $(dirname $0)/main.subr
+source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $url_binutils $binutils.tar.bz2
+    fetch $gnu_url/binutils/$binutils.tar.bz2
     return 0
 }
 
 function prepare() {
     do_cd $buildtop
-    do_cmd tar xjf $binutils.tar.bz2
-    for p in $scriptdir/$binutils-*.patch; do
-        [[ -f $p ]] || continue
-        do_cmd "patch -p1 -d $binutils < $p" \
-            || die "patch $p failed"
+    copy $binutils.tar.bz2 $buildtop/$binutils
+    for p in $scriptsdir/$binutils-*.patch; do
+        do_patch $binutils $p -p1
     done
     return 0
 }
 
 function build() {
-    do_cmd rm -rf $builddir
-    do_cmd mkdir $builddir
+    [[ -d $builddir ]] && do_cmd rm -rf $builddir
+    do_cmd mkdir -p $builddir
     do_cd $builddir
-    is_osx && disable_werror=--disable-werror || disable_werror=""
-    do_cmd ../$binutils/configure -target=$target --prefix=$prefix \
+    local disable_werror=
+    is_osx && disable_werror=--disable-werror
+    do_cmd ../$binutils/configure -target=arm-none-eabi --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls $disable_werror \
         || die "configure failed"

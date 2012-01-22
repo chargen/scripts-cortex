@@ -32,47 +32,14 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. $(dirname $0)/main.subr
-
-builddir=$buildtop/build-$target-gcc
-
-function download() {
-    do_cd $buildtop
-    fetch $url_gcccore $gcccore.tar.bz2
-    fetch $url_gmp $gmp.tar.bz2
-    fetch $url_mpfr $mpfr.tar.bz2
-    fetch $url_mpc $mpc.tar.gz
-    return 0
-}
-
-function prepare() {
-    do_cd $buildtop
-    if [[ ! -d $gcc ]]; then
-        do_cmd tar xjf $gcccore.tar.bz2
-    fi
-    if [[ ! -d $gcc/gmp ]]; then
-        do_cmd tar xjf $gmp.tar.bz2
-        [[ -d $gcc/gmp ]] && do_cmd rm -f $gcc/gmp
-        do_cmd ln -s $buildtop/$gmp $gcc/gmp
-    fi
-    if [[ ! -d $gcc/mpfr ]]; then
-        do_cmd tar xjf $mpfr.tar.bz2
-        [[ -d $gcc/mpfr ]] && do_cmd rm -f $gcc/mpfr
-        do_cmd ln -s $buildtop/$mpfr $gcc/mpfr
-    fi
-    if [[ ! -d $gcc/mpc ]]; then
-        do_cmd tar xzf $mpc.tar.gz
-        [[ -d $gcc/mpc ]] && do_cmd rm -f $gcc/mpc
-        do_cmd ln -s $buildtop/$mpc $gcc/mpc
-    fi
-    return 0
-}
+source $(dirname $0)/main.subr
+source $(dirname $0)/gcc.subr
 
 function build() {
-    do_cmd rm -rf $builddir
-    do_cmd mkdir $builddir
+    [[ -d $builddir ]] && do_cmd rm -rf $builddir
+    do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../$gcc/configure --target=$target --prefix=$prefix \
+    do_cmd ../$gcc/configure --target=$buildtarget --prefix=$prefix \
         --mandir=$prefix/share/man --infodir=$prefix/share/info \
         --enable-languages="c" --enable-interwork --enable-multilib \
         --with-newlib --without-headers \
@@ -86,11 +53,12 @@ function build() {
 
 function install() {
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install
+    do_cmd sudo make -j$(num_cpus) install-gcc
 }
 
 function cleanup() {
-    return 0
+    do_cd $buildtop
+    do_cmd rm -rf $builddir
 }
 
 main "$@"

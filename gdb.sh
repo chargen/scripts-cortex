@@ -32,25 +32,25 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. $(dirname $0)/main.subr
+source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $url_gdb $gdb.tar.bz2
+    fetch $gnu_url/gdb/$gdb.tar.bz2
     return 0
 }
 
 function prepare() {
-    dp_cd $buildtop
-    do_cmd tar xjf $gdb.tar.bz2
+    do_cd $buildtop
+    copy $gdb.tar.bz2 $buildtop/$gdb
     return 0
 }
 
 function build() {
-    do_cmd rm -rf $builddir
+    [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$gdb/configure --target=$target --prefix=$prefix \
+    do_cmd ../$gdb/configure --target=$buildtarget --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls \
         || die "configure failed"

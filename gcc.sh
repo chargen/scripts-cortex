@@ -32,7 +32,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. $(dirname $0)/main.subr
+source $(dirname $0)/main.subr
 
 PATH=$prefix/bin:$PATH
 
@@ -45,14 +45,14 @@ else
         case $cmd in
         build)
             for module in $modules; do
-                $scriptdir/$module.sh build install
+                $scriptsdir/$module.sh build install
             done
             ;;
         install)
             ;;
         download|clean|cleanup)
             for module in $modules; do
-                $scriptdir/$module.sh "$@"
+                $scriptsdir/$module.sh "$@"
             done
             ;;
         *)

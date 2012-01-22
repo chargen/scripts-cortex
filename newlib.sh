@@ -32,32 +32,28 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-. $(dirname $0)/main.subr
+source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $url_newlib $newlib.tar.gz
+    fetch $newlib_url/$newlib.tar.gz
     return 0
 }
 
 function prepare() {
     do_cd $buildtop
-    do_cmd rm -rf $newlib
-    do_cmd tar xzf $newlib.tar.gz
-    
-    for p in $scriptdir/newlib-fix_*.patch; do
-        [[ -f $p ]] || continue
-        do_cmd "patch -d $newlib -p1 < $p" \
-            || die "patch $p failed"
+    copy $newlib.tar.gz $buildtop/$newlib
+    for p in $scriptsdir/newlib-fix_*.patch; do
+        do_patch $newlib $p -p1
     done
     return 0
 }
 
 function build() {
-    do_cmd rm -rf $builddir
+    [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$newlib/configure --target=$target --prefix=$prefix \
+    do_cmd ../$newlib/configure --target=$buildtarget --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls \
         || die "configure failed"
