@@ -34,8 +34,7 @@
 
 function download() {
     do_cd $buildtop
-    local gcccore=${gcc/gcc-/gcc-core-}
-    fetch $gnu_url/gcc/$gcc/$gcccore.tar.bz2
+    fetch $gnu_url/gcc/$gcc/$gcc.tar.bz2
     fetch $gnu_url/gmp/$gmp.tar.bz2
     fetch $mpfr_url/$mpfr/$mpfr.tar.bz2
     fetch $mpc_url/$mpc.tar.gz
@@ -44,9 +43,8 @@ function download() {
 
 function prepare() {
     do_cd $buildtop
-    local gcccore=${gcc/gcc-/gcc-core-}
     [[ -d $gcc ]] \
-        || copy $gcccore.tar.bz2 $buildtop/$gcc
+        || copy $gcc.tar.bz2 $buildtop/$gcc
 
     [[ -d $gmp ]] \
         || copy $gmp.tar.bz2 $buildtop/$gmp

@@ -39,17 +39,17 @@ buildtarget=arm-none-eabi
 # gnu
 gnu_url=ftp://ftp.gnu.org/pub/gnu
 binutils=binutils-2.22
-gcc=gcc-4.6.2
-gmp=gmp-4.3.2
+gcc=gcc-4.7.0
+gmp=gmp-5.0.2
 gdb=gdb-7.3.1
 
 # mpfr
 mpfr_url=http://www.mpfr.org
-mpfr=mpfr-2.4.2
+mpfr=mpfr-3.1.0
 
 # mpc
 mpc_url=http://www.multiprecision.org/mpc/download
-mpc=mpc-0.8.2
+mpc=mpc-0.9
 
 # newlib
 newlib_url=ftp://sources.redhat.com/pub/newlib
