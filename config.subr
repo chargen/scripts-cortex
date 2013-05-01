@@ -38,18 +38,12 @@ buildtarget=arm-none-eabi
 
 # gnu
 gnu_url=ftp://ftp.gnu.org/pub/gnu
-binutils=binutils-2.23.1
-gcc=gcc-4.7.2
-gmp=gmp-5.0.5
-gdb=gdb-7.5.1
-
-# mpfr
-mpfr_url=http://www.mpfr.org
-mpfr=mpfr-3.0.1
-
-# mpc
-mpc_url=http://www.multiprecision.org/mpc/download
+binutils=binutils-2.23.2
+gcc=gcc-4.8.0
+gmp=gmp-5.1.1
+mpfr=mpfr-3.1.2
 mpc=mpc-1.0.1
+gdb=gdb-7.6
 
 # newlib
 newlib_url=ftp://sourceware.org/pub/newlib
