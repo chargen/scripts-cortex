@@ -38,16 +38,16 @@ buildtarget=arm-none-eabi
 
 # gnu
 gnu_url=ftp://ftp.gnu.org/pub/gnu
-binutils=binutils-2.23.2
-gcc=gcc-4.8.0
+binutils=binutils-2.24
+gcc=gcc-4.8.2
 gmp=gmp-5.1.1
 mpfr=mpfr-3.1.2
 mpc=mpc-1.0.1
-gdb=gdb-7.6
+gdb=gdb-7.6.2
 
 # newlib
 newlib_url=ftp://sourceware.org/pub/newlib
-newlib=newlib-2.0.0
+newlib=newlib-2.1.0
 
 # Local Variables:
 # indent-tabs-mode: nil
