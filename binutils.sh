@@ -55,7 +55,7 @@ function build() {
     do_cd $builddir
     local disable_werror=
     is_osx && disable_werror=--disable-werror
-    do_cmd ../$binutils/configure --target=arm-none-eabi --prefix=$prefix \
+    do_cmd ../$binutils/configure --target=$buildtarget --prefix=$prefix \
         --enable-interwork --enable-multilib \
         --disable-nls $disable_werror \
         || die "configure failed"
