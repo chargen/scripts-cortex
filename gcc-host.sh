@@ -1,7 +1,7 @@
 #!/bin/bash -u
 # -*- mode: shell-script; mode: flyspell-prog; -*-
 #
-# Copyright (c) 2012, Tadashi G Takaoka
+# Copyright (c) 2014, Tadashi G Takaoka
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,8 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+source $(dirname $0)/main.subr
+
 function download() {
     do_cd $buildtop
     fetch $gnu_url/gcc/$gcc/$gcc.tar.bz2
@@ -60,6 +62,33 @@ function prepare() {
 
     return 0
 }
+
+function build() {
+    [[ -d $builddir ]] && do_cmd rm -rf $builddir
+    do_cmd mkdir -p $builddir
+    do_cd $builddir
+    do_cmd ../$gcc/configure --target=$buildtarget --prefix=$prefix \
+        --enable-languages="c" --enable-interwork --enable-multilib \
+        --with-newlib \
+        --with-gnu-as --with-gnu-ld --with-system-zlib \
+        --disable-libmudflap --disable-libgomp --disable-libssp \
+        --disable-shared --disable-nls \
+        || die "configure failed"
+    do_cmd make -j$(num_cpus) all-host \
+        || die "make failed"
+}
+
+function install() {
+    do_cd $builddir
+    do_cmd sudo make -j$(num_cpus) install-host
+}
+
+function cleanup() {
+    do_cd $buildtop
+    do_cmd rm -rf $builddir
+}
+
+main "$@"
 
 # Local Variables:
 # indent-tabs-mode: nil

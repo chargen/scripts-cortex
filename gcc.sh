@@ -36,7 +36,7 @@ source $(dirname $0)/main.subr
 
 PATH=$prefix/bin:$PATH
 
-modules="gcc-prog newlib gcc-libs"
+modules="gcc-host newlib gcc-target"
 
 if [[ $# -eq 0 ]]; then
     $0 download build

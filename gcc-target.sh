@@ -33,27 +33,24 @@
 #
 
 source $(dirname $0)/main.subr
-source $(dirname $0)/gcc.subr
+
+function download() {
+    :
+}
+
+function prepare() {
+    do_cmd ln -s ${builddir%gcc-target}gcc-host ${builddir}
+}
 
 function build() {
-    [[ -d $builddir ]] && do_cmd rm -rf $builddir
-    do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../$gcc/configure --target=$buildtarget --prefix=$prefix \
-        --mandir=$prefix/share/man --infodir=$prefix/share/info \
-        --enable-languages="c" --enable-interwork --enable-multilib \
-        --with-newlib \
-        --with-gnu-as --with-gnu-ld --with-system-zlib \
-        --disable-libmudflap --disable-libgomp --disable-libssp \
-        --disable-shared --disable-nls \
-        || die "configure failed"
-    do_cmd make -j$(num_cpus) \
+    do_cmd make -j$(num_cpus) all-target \
         || die "make failed"
 }
 
 function install() {
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install
+    do_cmd sudo make -j$(num_cpus) install-target
 }
 
 function cleanup() {
