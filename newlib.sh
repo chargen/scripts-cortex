@@ -36,13 +36,22 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $newlib_url/$newlib.tar.gz
+    if [[ $newlib == newlib-current ]]; then
+        clone git $newlib_repo $newlib
+        do_cd $newlib
+        git checkout master
+        do_cd $buildtop
+    else
+        fetch $newlib_url/$newlib.tar.gz
+    fi
     return 0
 }
 
 function prepare() {
+    [[ $newlib == newlib-current ]] && return
     do_cd $buildtop
-    copy $newlib.tar.gz $buildtop/$newlib
+    [[ -d $newlib ]] \
+        || copy $newlib.tar.gz $buildtop/$newlib
     for p in $scriptsdir/newlib-fix_*.patch; do
         do_patch $newlib $p -p1
     done
@@ -53,8 +62,11 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$newlib/configure --target=$buildtarget --prefix=$prefix \
-        --enable-interwork --enable-multilib \
+    do_cmd ../$newlib/configure \
+        --target=$buildtarget \
+        --prefix=$prefix \
+        --enable-interwork \
+        --enable-multilib \
         --disable-nls \
         || die "configure failed"
     do_cmd make -j$(num_cpus) \
@@ -69,7 +81,8 @@ function install() {
 
 function cleanup() {
     do_cd $buildtop
-    do_cmd rm -rf $builddir $newlib
+    do_cmd rm -rf $builddir
+    [[ $newlib == newlib-current ]] || do_cmd rm -rf $newlib
 }
 
 main "$@"
