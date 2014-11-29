@@ -36,7 +36,7 @@ source $(dirname $0)/main.subr
 
 PATH=$prefix/bin:$PATH
 
-modules="binutils gcc-prog newlib gcc-libs gdb scripts"
+modules="binutils gcc-host newlib gcc-target gdb scripts"
 
 if [[ $# -eq 0 ]]; then
     for module in $modules; do

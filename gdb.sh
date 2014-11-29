@@ -50,8 +50,11 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$gdb/configure --target=$buildtarget --prefix=$prefix \
-        --enable-interwork --enable-multilib \
+    do_cmd ../$gdb/configure \
+        --target=$buildtarget \
+        --prefix=$prefix \
+        --enable-interwork \
+        --enable-multilib \
         --disable-nls \
         || die "configure failed"
     do_cmd make -j$(num_cpus) \
