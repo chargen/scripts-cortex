@@ -36,17 +36,21 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
+    [[ $gdb == gdb-current ]] && return
     fetch $gnu_url/gdb/$gdb.tar.bz2
     return 0
 }
 
 function prepare() {
+    [[ $gdb == gdb-current ]] && return
     do_cd $buildtop
-    copy $gdb.tar.bz2 $buildtop/$gdb
+    [[ -d $gdb ]] \
+        || copy $gdb.tar.bz2 $buildtop/$gdb
     return 0
 }
 
 function build() {
+    [[ $gdb == gdb-current ]] && return
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
@@ -62,11 +66,13 @@ function build() {
 }
 
 function install() {
+    [[ $gdb == gdb-current ]] && return
     do_cd $builddir
     do_cmd sudo make -j$(num_cpus) install
 }
 
 function cleanup() {
+    [[ $gdb == gdb-current ]] && return
     do_cd $buildtop
     do_cmd rm -rf $builddir $gdb
 }

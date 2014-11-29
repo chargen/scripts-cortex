@@ -36,7 +36,14 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $gnu_url/gcc/$gcc/$gcc.tar.bz2
+    if [[ $gcc = gcc-current ]]; then
+        clone git $gcc_repo $gcc
+        do_cd $gcc
+        git checkout trunk
+        do_cd $buildtop
+    else
+        fetch $gnu_url/gcc/$gcc/$gcc.tar.bz2
+    fi
     fetch $gnu_url/gmp/$gmp.tar.bz2
     fetch $gnu_url/mpfr/$mpfr.tar.bz2
     fetch $gnu_url/mpc/$mpc.tar.gz
@@ -45,7 +52,7 @@ function download() {
 
 function prepare() {
     do_cd $buildtop
-    [[ -d $gcc ]] \
+    [[ $gcc == gcc-current || -d $gcc ]] \
         || copy $gcc.tar.bz2 $buildtop/$gcc
 
     [[ -d $gmp ]] \

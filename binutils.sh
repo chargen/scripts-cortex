@@ -36,13 +36,21 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    fetch $gnu_url/binutils/$binutils.tar.bz2
+    if [[ $binutils == binutils-current ]]; then
+        clone git $binutils_repo $binutils
+        do_cd $binutils
+        git checkout master
+        do_cd $buildtop
+    else
+        fetch $gnu_url/binutils/$binutils.tar.bz2
+    fi
     return 0
 }
 
 function prepare() {
     do_cd $buildtop
-    copy $binutils.tar.bz2 $buildtop/$binutils
+    [[ $binutils == binutils-current || -d $binutils ]] \
+        || copy $binutils.tar.bz2 $buildtop/$binutils
     for p in $scriptsdir/$binutils-*.patch; do
         do_patch $binutils $p -p1
     done
@@ -72,7 +80,8 @@ function install() {
 
 function cleanup() {
     do_cd $buildtop
-    do_cmd rm -rf $builddir $binutils
+    do_cmd rm -rf $builddir
+    [[ $binutils == binutils-current ]] || do_cmd rm -rf $binutils
 }
 
 main "$@"

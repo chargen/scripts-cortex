@@ -49,6 +49,15 @@ gdb=gdb-7.7.1
 newlib_url=ftp://sourceware.org/pub/newlib
 newlib=newlib-2.1.0
 
+# current versions
+binutils_repo=git://sourceware.org/git/binutils-gdb.git
+binutils=binutils-current
+gdb=gdb-current
+gcc_repo=git://gcc.gnu.org/git/gcc.git
+gcc=gcc-current
+newlib_repo=git://sourceware.org/git/newlib.git
+newlib=newlib-current
+
 # Local Variables:
 # indent-tabs-mode: nil
 # End:
