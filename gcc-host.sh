@@ -77,7 +77,7 @@ function build() {
     do_cmd ../$gcc/configure \
         --target=$buildtarget \
         --prefix=$prefix \
-        --enable-languages="c" \
+        --enable-languages="c,c++" \
         --enable-interwork \
         --enable-multilib \
         --with-newlib \

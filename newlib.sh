@@ -67,10 +67,12 @@ function build() {
         --prefix=$prefix \
         --enable-interwork \
         --enable-multilib \
+        --enable-target-optspace \
+        --enable-newlib-nano-malloc \
+        --enable-newlib-nano-formatted-io \
         --disable-nls \
         || die "configure failed"
     do_cmd make -j$(num_cpus) \
-        'CFLAGS_FOR_TARGET="-DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer"' \
         || die "make failed"
 }
 

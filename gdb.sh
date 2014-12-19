@@ -37,7 +37,7 @@ source $(dirname $0)/main.subr
 function download() {
     do_cd $buildtop
     [[ $gdb == gdb-current ]] && return
-    fetch $gnu_url/gdb/$gdb.tar.bz2
+    fetch $gnu_url/gdb/$gdb.tar.xz
     return 0
 }
 
@@ -45,7 +45,7 @@ function prepare() {
     [[ $gdb == gdb-current ]] && return
     do_cd $buildtop
     [[ -d $gdb ]] \
-        || copy $gdb.tar.bz2 $buildtop/$gdb
+        || copy $gdb.tar.xz $buildtop/$gdb
     return 0
 }
 

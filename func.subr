@@ -60,16 +60,6 @@ function is_osx() {
     [[ $(uname) = Darwin ]]
 }
 
-function is_osx_snow_leopard() {
-    is_osx || return 1
-    [[ $(sw_vers -productVersion) =~ ^10.6 ]]
-}
-
-function is_osx_lion() {
-    is_osx || return 1
-    [[ $(sw_vers -productVersion) =~ ^10.7 ]]
-}
-
 function is_linux() {
     [[ $(uname) = Linux ]]
 }

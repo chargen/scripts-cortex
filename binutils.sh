@@ -67,7 +67,6 @@ function build() {
         --enable-interwork \
         --enable-multilib \
         --disable-nls \
-        --disable-werror \
         || die "configure failed"
     do_cmd make -j$(num_cpus) \
         || die "make failed"
