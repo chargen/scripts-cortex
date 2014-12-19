@@ -178,6 +178,9 @@ function copy() {
         *.tar.bz2)
             out=$(basename $from .tar.bz2)
             extract=(tar xjf);;
+        *.tar.xz)
+            out=$(basename $from .tar.xz)
+            extract=(tar xJf);;
         *)
             die "unknown source format $from";;
         esac
