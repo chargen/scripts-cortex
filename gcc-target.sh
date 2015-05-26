@@ -55,8 +55,8 @@ function install() {
 
 function cleanup() {
     do_cd $buildtop
-    do_cmd rm -rf $builddir $gmp $mpfr $mpc
-    [[ $gcc = gcc-current ]] || do_cmd rm -rf $gcc
+    do_cmd rm -rf $builddir gmp-$gmp mpfr-$mpfr mpc-$mpc
+    [[ $gcc = current ]] || do_cmd rm -rf gcc-$gcc
 }
 
 main "$@"

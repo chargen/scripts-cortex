@@ -36,24 +36,24 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    if [[ $newlib == newlib-current ]]; then
-        clone git $newlib_repo $newlib
-        do_cd $newlib
+    if [[ $newlib == current ]]; then
+        clone git $newlib_repo newlib-$newlib
+        do_cd newlib-$newlib
         git checkout master
         do_cd $buildtop
     else
-        fetch $newlib_url/$newlib.tar.gz
+        fetch $newlib_url/newlib-$newlib.tar.gz
     fi
     return 0
 }
 
 function prepare() {
-    [[ $newlib == newlib-current ]] && return
+    [[ $newlib == current ]] && return
     do_cd $buildtop
-    [[ -d $newlib ]] \
-        || copy $newlib.tar.gz $buildtop/$newlib
+    [[ -d newlib-$newlib ]] \
+        || copy newlib-$newlib.tar.gz $buildtop/newlib-$newlib
     for p in $scriptsdir/newlib-fix_*.patch; do
-        do_patch $newlib $p -p1
+        do_patch newlib-$newlib $p -p1
     done
     return 0
 }
@@ -62,7 +62,7 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$newlib/configure \
+    do_cmd ../newlib-$newlib/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-interwork \
@@ -78,13 +78,13 @@ function build() {
 
 function install() {
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install
+    do_cmd sudo make install
 }
 
 function cleanup() {
     do_cd $buildtop
     do_cmd rm -rf $builddir
-    [[ $newlib == newlib-current ]] || do_cmd rm -rf $newlib
+    [[ $newlib == current ]] || do_cmd rm -rf newlib-$newlib
 }
 
 main "$@"

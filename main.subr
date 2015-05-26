@@ -58,10 +58,10 @@ function main() {
         esac
     done
 
-    export PATH=$prefix/bin:$PATH
+    PATH=$(add_path $PATH $prefix/bin)
     if is_osx; then
-        export CC=gcc-mp-4.9
-        export CXX=g++-mp-4.9
+        export CC=gcc-mp-5
+        export CXX=g++-mp-5
     fi
     if [[ ${#cmds[@]} -eq 0 ]]; then
         download && prepare && build

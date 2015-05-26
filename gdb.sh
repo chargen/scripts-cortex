@@ -36,25 +36,25 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    [[ $gdb == gdb-current ]] && return
-    fetch $gnu_url/gdb/$gdb.tar.xz
+    [[ $gdb == current ]] && return
+    fetch $gnu_url/gdb/gdb-$gdb.tar.xz
     return 0
 }
 
 function prepare() {
-    [[ $gdb == gdb-current ]] && return
+    [[ $gdb == current ]] && return
     do_cd $buildtop
-    [[ -d $gdb ]] \
-        || copy $gdb.tar.xz $buildtop/$gdb
+    [[ -d gdb-$gdb ]] \
+        || copy gdb-$gdb.tar.xz $buildtop/gdb-$gdb
     return 0
 }
 
 function build() {
-    [[ $gdb == gdb-current ]] && return
+    [[ $gdb == current ]] && return
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir $builddir
     do_cd $builddir
-    do_cmd ../$gdb/configure \
+    do_cmd ../gdb-$gdb/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-interwork \
@@ -66,15 +66,15 @@ function build() {
 }
 
 function install() {
-    [[ $gdb == gdb-current ]] && return
+    [[ $gdb == current ]] && return
     do_cd $builddir
     do_cmd sudo make -j$(num_cpus) install
 }
 
 function cleanup() {
-    [[ $gdb == gdb-current ]] && return
+    [[ $gdb == current ]] && return
     do_cd $buildtop
-    do_cmd rm -rf $builddir $gdb
+    do_cmd rm -rf $builddir gdb-$gdb
 }
 
 main "$@"

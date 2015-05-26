@@ -36,36 +36,36 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    if [[ $gcc = gcc-current ]]; then
-        clone git $gcc_repo $gcc
-        do_cd $gcc
+    if [[ $gcc = current ]]; then
+        clone git $gcc_repo gcc-$gcc
+        do_cd gcc-$gcc
         git checkout trunk
         do_cd $buildtop
     else
-        fetch $gnu_url/gcc/$gcc/$gcc.tar.bz2
+        fetch $gnu_url/gcc/gcc-$gcc/gcc-$gcc.tar.bz2
     fi
-    fetch $gnu_url/gmp/$gmp.tar.bz2
-    fetch $gnu_url/mpfr/$mpfr.tar.bz2
-    fetch $gnu_url/mpc/$mpc.tar.gz
+    fetch $gnu_url/gmp/gmp-$gmp.tar.xz
+    fetch $gnu_url/mpfr/mpfr-$mpfr.tar.xz
+    fetch $gnu_url/mpc/mpc-$mpc.tar.gz
     return 0
 }
 
 function prepare() {
     do_cd $buildtop
-    [[ $gcc == gcc-current || -d $gcc ]] \
-        || copy $gcc.tar.bz2 $buildtop/$gcc
+    [[ $gcc == current || -d gcc-$gcc ]] \
+        || copy gcc-$gcc.tar.bz2 $buildtop/gcc-$gcc
 
-    [[ -d $gmp ]] \
-        || copy $gmp.tar.bz2 $buildtop/$gmp
-    symlink $buildtop/$gmp $gcc/gmp
+    [[ -d gmp-$gmp ]] \
+        || copy gmp-$gmp.tar.xz $buildtop/gmp-$gmp
+    symlink $buildtop/gmp-$gmp gcc-$gcc/gmp
 
-    [[ -d $mpfr ]] \
-        || copy $mpfr.tar.bz2 $buildtop/$mpfr
-    symlink $buildtop/$mpfr $gcc/mpfr
+    [[ -d mpfr-$mpfr ]] \
+        || copy mpfr-$mpfr.tar.xz $buildtop/mpfr-$mpfr
+    symlink $buildtop/mpfr-$mpfr gcc-$gcc/mpfr
 
-    [[ -d $mpc ]] \
-        || copy $mpc.tar.gz $buildtop/$mpc
-    symlink $buildtop/$mpc $gcc/mpc
+    [[ -d mpc-$mpc ]] \
+        || copy mpc-$mpc.tar.gz $buildtop/mpc-$mpc
+    symlink $buildtop/mpc-$mpc gcc-$gcc/mpc
 
     return 0
 }
@@ -74,7 +74,7 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../$gcc/configure \
+    do_cmd ../gcc-$gcc/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-languages="c,c++" \

@@ -110,34 +110,31 @@ function fetch() {
 }
 
 function clone() {
-    local sudo=no
-    [[ $1 == "--sudo" ]] && { sudo=yes; shift; }
+    local -a cmd_line
+    [[ $1 == "--sudo" ]] && { cmd_line+=(sudo); shift; }
     [[ $# -ge 3 ]] \
         || die "usage: clone [--sudo] git|svn|cvs repo out_dir [...]"
     local cmd=$1 repo=$2 out=$3
     shift 3
 
-    local line
     if [[ -d $out ]]; then
         do_cd $out
         case $cmd in
-        git) line+=(git pull);;
-        svn) line+=(svn up);;
-        cvs) line+=(cvs -q up);;
+        git) cmd_line+=(git pull);;
+        svn) cmd_line+=(svn up);;
+        cvs) cmd_line+=(cvs -q up);;
         *)   die "unknown command $cmd";;
         esac
-        [[ $sudo == yes ]] && line=(sudo "${line[@]}")
-        do_cmd "${line[@]}"
+        do_cmd "${cmd_line[@]}"
         do_cd -
     else
         case $cmd in
-        git) line+=(git clone $repo $out "$@");;
-        svn) line+=(svn checkout $repo $out);;
-        cvs) line+=(cvs -z3 -d $repo checkout -P $out);;
+        git) cmd_line+=(git clone $repo $out "$@");;
+        svn) cmd_line+=(svn checkout $repo $out);;
+        cvs) cmd_line+=(cvs -z3 -d $repo checkout -P $out);;
         *)   die "unknown command $cmd";;
         esac
-        [[ $sudo == yes ]] && line=(sudo "${line[@]}")
-        do_cmd "${line[@]}"
+        do_cmd "${cmd_line[@]}"
     fi
 }
 
@@ -146,8 +143,9 @@ function copy() {
     [[ $1 == "--sudo" ]] && { sudo=yes; shift; }
     [[ $# -eq 2 ]] || die "usage: copy [--sudo] from to_dir"
 
-    local from=$1 to=$2 rm=(rm) mkdir=(mkdir) tar=(tar) mv=(mv)
+    local from=$1 to=$2 extract=() rm=(rm) mkdir=(mkdir) tar=(tar) mv=(mv)
     if [[ $sudo == yes ]]; then
+        extract=(sudo)
         rm=(sudo rm)
         mkdir=(sudo mkdir)
         tar=(sudo tar)
@@ -156,30 +154,46 @@ function copy() {
 
     [[ -d $to ]] && do_cmd "${rm[@]} -rf $to"
     if [[ -d $from ]]; then
-        do_cmd "${mkdir[@]} -p $to"
+        do_cmd "${mkdir[@]}" -p $to
         local exclude=(--exclude CVS --exclude .svn --exclude .git)
-        do_cmd "tar cf - -C $from . | ${tar[@]} xf - ${exclude[@]} -C $to"
+        do_cmd "tar cf - -C $from . | ${tar[@]} xf - ${exclude[@]} -o -C $to"
     elif [[ -f $from ]]; then
-        local out extract
+        local file extract zip=no
         case $from in
         *.tar.gz)
-            out=$(basename $from .tar.gz)
-            extract=(tar xzf);;
+            file=$(tar tzf $from | head -1)
+            extract+=(tar xzf);;
         *.tar.bz2)
-            out=$(basename $from .tar.bz2)
-            extract=(tar xjf);;
+            file=$(tar tjf $from | head -1)
+            extract+=(tar xjf);;
         *.tar.xz)
-            out=$(basename $from .tar.xz)
-            extract=(tar xJf);;
+            file=$(tar tJf $from | head -1)
+            extract+=(tar xJf);;
+        *.zip)
+            zip=yes
+            file=$(unzip -l -q $from | head -3 | tail -1 | awk '{print $NF}')
+            extract+=(unzip);;
         *)
             die "unknown source format $from";;
         esac
+        local out=${file/\/*}
         if [[ $out == $(basename $to) ]]; then
-            [[ $sudo == yes ]] && extract=(sudo "${extract[@]}")
-            do_cmd "${extract[@]} $from -C $(dirname $to)"
+            if [[ $zip == yes ]]; then
+                extract+=($from -d $(dirname $to))
+            else
+                extract+=($from -C $(dirname $to))
+            fi
+            do_cmd "${extract[@]}"
         else
-            do_cmd "${extract[@]} $from"
-            do_cmd "${mv[@]} $out $to"
+            if [[ $zip == yes ]]; then
+                extract+=($from)
+                do_cmd "${extract[@]}"
+                do_cmd "${mv[@]} $out $to"
+            else
+                do_cmd "${mkdir[@]} -p $to"
+                extract+=($from -C $to --strip-components 1)
+                do_cmd "${extract[@]}"
+            fi
         fi
     fi
 }

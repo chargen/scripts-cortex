@@ -36,23 +36,23 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    if [[ $binutils == binutils-current ]]; then
-        clone git $binutils_repo $binutils
-        do_cd $binutils
+    if [[ $binutils == current ]]; then
+        clone git $binutils_repo binutils-$binutils
+        do_cd binutils-$binutils
         git checkout master
         do_cd $buildtop
     else
-        fetch $gnu_url/binutils/$binutils.tar.bz2
+        fetch $gnu_url/binutils/binutils-$binutils.tar.bz2
     fi
     return 0
 }
 
 function prepare() {
     do_cd $buildtop
-    [[ $binutils == binutils-current || -d $binutils ]] \
-        || copy $binutils.tar.bz2 $buildtop/$binutils
-    for p in $scriptsdir/$binutils-*.patch; do
-        do_patch $binutils $p -p1
+    [[ $binutils == current || -d binutils-$binutils ]] \
+        || copy binutils-$binutils.tar.bz2 $buildtop/binutils-$binutils
+    for p in $scriptsdir/binutils-$binutils-*.patch; do
+        do_patch binutils-$binutils $p -p1
     done
     return 0
 }
@@ -61,7 +61,7 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../$binutils/configure \
+    do_cmd ../binutils-$binutils/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-interwork \
@@ -80,7 +80,7 @@ function install() {
 function cleanup() {
     do_cd $buildtop
     do_cmd rm -rf $builddir
-    [[ $binutils == binutils-current ]] || do_cmd rm -rf $binutils
+    [[ $binutils == current ]] || do_cmd rm -rf binutils-$binutils
 }
 
 main "$@"
