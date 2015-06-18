@@ -36,18 +36,27 @@ source $(dirname $0)/main.subr
 
 PATH=$prefix/bin:$PATH
 
-modules="binutils gdb gcc-host newlib gcc-target scripts"
+modules=(binutils gdb gcc-host newlib gcc-target scripts)
 
 if [[ $# -eq 0 ]]; then
-    for module in $modules; do
+    for module in "${modules[@]}"; do
         $scriptsdir/$module.sh download
     done
-    for module in $modules; do
+    for module in "${modules[@]}"; do
         $scriptsdir/$module.sh build install
     done
-elif [[ $1 == cleanup || $1 == clean ]]; then
-    for module in $modules; do
-        $scriptsdir/$module.sh cleanup
+else
+    for cmd in "$@"; do
+        case $cmd in
+            download | build | install | clean | cleanup)
+                for module in "${modules[@]}"; do
+                    $scriptsdir/$module.sh $cmd
+                done
+                ;;
+            *)
+                die "unknown command $cmd"
+                ;;
+        esac
     done
 fi
 
