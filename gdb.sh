@@ -36,45 +36,55 @@ source $(dirname $0)/main.subr
 
 function download() {
     do_cd $buildtop
-    [[ $gdb == current ]] && return
-    fetch $gnu_url/gdb/gdb-$gdb.tar.xz
+    if [[ $gdb == current ]]; then
+        clone git $binutils_gdb_repo binutils-gdb-$gdb
+        do_cd binutils-gdb-$gdb
+        git checkout master
+        do_cd $buildtop
+    else
+        fetch $gnu_url/gdb/gdb-$gdb.tar.xz
+    fi
     return 0
 }
 
 function prepare() {
-    [[ $gdb == current ]] && return
     do_cd $buildtop
-    [[ -d gdb-$gdb ]] \
+    [[ $gdb == current || -d gdb-$gdb ]] \
         || copy gdb-$gdb.tar.xz $buildtop/gdb-$gdb
     return 0
 }
 
 function build() {
-    [[ $gdb == current ]] && return
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
-    do_cmd mkdir $builddir
+    do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../gdb-$gdb/configure \
+    local src_dir=gdb make_target=(all)
+    if [[ $gdb == current ]]; then
+        src_dir=binutils-gdb
+        make_target=(configure-gdb all-gdb)
+    fi
+    do_cmd ../$src_dir-$gdb/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-interwork \
         --enable-multilib \
         --disable-nls \
         || die "configure failed"
-    do_cmd make -j$(num_cpus) \
+    do_cmd make -j$(num_cpus) "${make_target[@]}" \
         || die "make failed"
 }
 
 function install() {
-    [[ $gdb == current ]] && return
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install
+    local install_target=(install)
+    [[ $gdb == current ]] && install_target=(install-gdb)
+    do_cmd sudo make "${install_target[@]}"
 }
 
 function cleanup() {
-    [[ $gdb == current ]] && return
     do_cd $buildtop
-    do_cmd rm -rf $builddir gdb-$gdb
+    do_cmd rm -rf $builddir
+    [[ $gdb == current ]] || do_cmd rm -rf gdb-$gdb
 }
 
 main "$@"

@@ -37,8 +37,8 @@ source $(dirname $0)/main.subr
 function download() {
     do_cd $buildtop
     if [[ $binutils == current ]]; then
-        clone git $binutils_repo binutils-$binutils
-        do_cd binutils-$binutils
+        clone git $binutils_gdb_repo binutils-gdb-$binutils
+        do_cd binutils-gdb-$binutils
         git checkout master
         do_cd $buildtop
     else
@@ -61,20 +61,29 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir -p $builddir
     do_cd $builddir
-    do_cmd ../binutils-$binutils/configure \
+    local src_dir=binutils make_target=(all)
+    if [[ $binutils == current ]]; then
+        src_dir=binutils-gdb
+        make_target=(configure-host all-binutils all-gas all-ld all-gprof)
+    fi
+    do_cmd ../$src_dir-$binutils/configure \
         --target=$buildtarget \
         --prefix=$prefix \
         --enable-interwork \
         --enable-multilib \
+        --disable-werror \
         --disable-nls \
         || die "configure failed"
-    do_cmd make -j$(num_cpus) \
+    do_cmd make -j$(num_cpus) "${make_target[@]}" \
         || die "make failed"
 }
 
 function install() {
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install
+    local install_target=(install)
+    [[ $binutils == current ]] \
+        && install_target=(install-binutils install-gas install-ld install-gprof)
+    do_cmd sudo make "${install_target[@]}"
 }
 
 function cleanup() {

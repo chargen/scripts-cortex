@@ -39,21 +39,24 @@ function download() {
 }
 
 function prepare() {
-    do_cmd ln -s ${builddir%gcc-target}gcc-host ${builddir}
+    :
 }
 
 function build() {
+    builddir=${builddir%-target}
     do_cd $builddir
     do_cmd make -j$(num_cpus) all-target \
         || die "make failed"
 }
 
 function install() {
+    builddir=${builddir%-target}
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install-target
+    do_cmd sudo make install-target
 }
 
 function cleanup() {
+    builddir=${builddir%-target}
     do_cd $buildtop
     do_cmd rm -rf $builddir gmp-$gmp mpfr-$mpfr mpc-$mpc
     [[ $gcc = current ]] || do_cmd rm -rf gcc-$gcc

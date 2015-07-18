@@ -53,7 +53,7 @@ function cortex::config() {
     local prefix buildtarget
     local binutils gdb gcc gmp mpfr mpc newlib
     local gnu_url newlib_url
-    local binutils_repo gcc_repo newlib_repo
+    local binutils_gdb_repo gcc_repo newlib_repo
     source $scriptsdir/config.subr
 
     if [[ $# -eq 1 ]]; then

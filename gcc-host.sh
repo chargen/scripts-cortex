@@ -71,6 +71,7 @@ function prepare() {
 }
 
 function build() {
+    builddir=${builddir%-host}
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir -p $builddir
     do_cd $builddir
@@ -95,13 +96,13 @@ function build() {
 }
 
 function install() {
+    builddir=${builddir%-host}
     do_cd $builddir
-    do_cmd sudo make -j$(num_cpus) install-host
+    do_cmd sudo make install-host
 }
 
 function cleanup() {
     do_cd $buildtop
-    do_cmd rm -rf $builddir
 }
 
 main "$@"
