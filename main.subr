@@ -60,8 +60,15 @@ function main() {
 
     PATH=$(add_path $PATH $prefix/bin)
     if is_osx; then
-        export CC=gcc-mp-5
-        export CXX=g++-mp-5
+        if [[ $(which gcc-mp-5) =~ gcc-mp-5 ]]; then
+            export CC=gcc-mp-5
+            export CXX=g++-mp-5
+        elif [[ $(which gcc-5) =~ gcc-5 ]]; then
+            export CC=gcc-5
+            export CXX=g++-5
+        else
+            die "Please install gcc5 using macport or homebrew"
+        fi
     fi
     if [[ ${#cmds[@]} -eq 0 ]]; then
         download && prepare && build
