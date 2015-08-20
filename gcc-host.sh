@@ -44,9 +44,10 @@ function download() {
     else
         fetch $gnu_url/gcc/gcc-$gcc/gcc-$gcc.tar.bz2
     fi
-    fetch $gnu_url/gmp/gmp-$gmp.tar.xz
-    fetch $gnu_url/mpfr/mpfr-$mpfr.tar.xz
-    fetch $gnu_url/mpc/mpc-$mpc.tar.gz
+    [[ $gmp == host ]] || fetch $gnu_url/gmp/gmp-$gmp.tar.xz
+    [[ $isl == host ]] || fetch $isl_url/isl-$isl.tar.bz2
+    [[ $mpc == host ]] || fetch $gnu_url/mpc/mpc-$mpc.tar.gz
+    [[ $mpfr == host ]] || fetch $gnu_url/mpfr/mpfr-$mpfr.tar.xz
     return 0
 }
 
@@ -55,17 +56,21 @@ function prepare() {
     [[ $gcc == current || -d gcc-$gcc ]] \
         || copy gcc-$gcc.tar.bz2 $buildtop/gcc-$gcc
 
-    [[ -d gmp-$gmp ]] \
+    [[ $gmp == host || -d gmp-$gmp ]] \
         || copy gmp-$gmp.tar.xz $buildtop/gmp-$gmp
-    symlink $buildtop/gmp-$gmp gcc-$gcc/gmp
+    [[ $gmp == host ]] || symlink $buildtop/gmp-$gmp gcc-$gcc/gmp
 
-    [[ -d mpfr-$mpfr ]] \
-        || copy mpfr-$mpfr.tar.xz $buildtop/mpfr-$mpfr
-    symlink $buildtop/mpfr-$mpfr gcc-$gcc/mpfr
+    [[ $isl == host || -d isl-$isl ]] \
+        || copy isl-$isl.tar.bz2 $buildtop/isl-$isl
+    [[ $isl == host ]] || symlink $buildtop/isl-$isl gcc-$gcc/isl
 
-    [[ -d mpc-$mpc ]] \
+    [[ $mpc == host || -d mpc-$mpc ]] \
         || copy mpc-$mpc.tar.gz $buildtop/mpc-$mpc
-    symlink $buildtop/mpc-$mpc gcc-$gcc/mpc
+    [[ $mpc == host ]] || symlink $buildtop/mpc-$mpc gcc-$gcc/mpc
+
+    [[ $mpfr == host || -d mpfr-$mpfr ]] \
+        || copy mpfr-$mpfr.tar.xz $buildtop/mpfr-$mpfr
+    [[ $mpfr == host ]] || symlink $buildtop/mpfr-$mpfr gcc-$gcc/mpfr
 
     return 0
 }
@@ -75,6 +80,11 @@ function build() {
     [[ -d $builddir ]] && do_cmd rm -rf $builddir
     do_cmd mkdir -p $builddir
     do_cd $builddir
+    local lib_flags=()
+    [[ $gmp == host ]] && lib_flags+=(--with-gmp)
+    [[ $isl == host ]] && lib_flags+=(--with-isl)
+    [[ $mpc == host ]] && lib_flags+=(--with-mpc)
+    [[ $mpfr == host ]] && lib_flags+=(--with-mpfr)
     do_cmd ../gcc-$gcc/configure \
         --target=$buildtarget \
         --prefix=$prefix \
@@ -84,6 +94,7 @@ function build() {
         --with-newlib \
         --with-gnu-as \
         --with-gnu-ld \
+        "${lib_flags[@]:-}" \
         --with-system-zlib \
         --disable-libmudflap \
         --disable-libgomp \

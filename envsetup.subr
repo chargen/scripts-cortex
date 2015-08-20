@@ -51,8 +51,8 @@ function cortex::config() {
     fi
 
     local prefix buildtarget
-    local binutils gdb gcc gmp mpfr mpc newlib
-    local gnu_url newlib_url
+    local binutils gdb gcc gmp isl mpc mpfr newlib
+    local gnu_url isl_url newlib_url
     local binutils_gdb_repo gcc_repo newlib_repo
     source $scriptsdir/config.subr
 
