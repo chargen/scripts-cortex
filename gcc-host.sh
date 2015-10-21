@@ -81,10 +81,19 @@ function build() {
     do_cmd mkdir -p $builddir
     do_cd $builddir
     local lib_flags=()
-    [[ $gmp == host ]] && lib_flags+=(--with-gmp)
-    [[ $isl == host ]] && lib_flags+=(--with-isl)
-    [[ $mpc == host ]] && lib_flags+=(--with-mpc)
-    [[ $mpfr == host ]] && lib_flags+=(--with-mpfr)
+    local brew_bin=$(which brew)
+    if [[ $brew_bin =~ brew ]]; then
+        local brew_prefix=${brew_bin%/bin/brew}
+        [[ $gmp == host ]] && lib_flags+=(--with-gmp=$brew_prefix)
+        [[ $isl == host ]] && lib_flags+=(--with-isl=$brew_prefix)
+        [[ $mpc == host ]] && lib_flags+=(--with-mpc=$brew_prefix)
+        [[ $mpfr == host ]] && lib_flags+=(--with-mpfr=$brew_prefix)
+    else
+        [[ $gmp == host ]] && lib_flags+=(--with-gmp)
+        [[ $isl == host ]] && lib_flags+=(--with-isl)
+        [[ $mpc == host ]] && lib_flags+=(--with-mpc)
+        [[ $mpfr == host ]] && lib_flags+=(--with-mpfr)
+    fi
     do_cmd ../gcc-$gcc/configure \
         --target=$buildtarget \
         --prefix=$prefix \
