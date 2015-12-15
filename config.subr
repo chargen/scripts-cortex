@@ -39,8 +39,8 @@ buildtarget=arm-none-eabi
 # tools' version
 binutils=2.25.1
 gdb=7.9.1
-gcc=5.2.0
-#gmp=6.0.0a
+gcc=5.3.0
+#gmp=6.1.0
 #isl=0.15
 #mpc=1.0.3
 #mpfr=3.1.3
